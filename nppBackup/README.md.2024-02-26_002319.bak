@@ -1,8 +1,0 @@
-Moddable SDKをm5stack Core2 v1.1に対応させるためのファイルです
-
-xs-devフォルダにこのリポジトリのコードを追加し、ビルドターゲットをesp32/m5stack_core2_11とすれば、途中までは動くはずです。ただし、2024/2/18現在、タッチパネル関連の不具合が解決できていません。
-
-※axp2101.jsは上書きされます。
-
-現在の状態(デバッガ)
-![image](https://github.com/RChikamura/Moddable_Repair_RChikamura/assets/76420242/3b3d9ae6-6793-4d5a-9691-d6eedbffd83a)
