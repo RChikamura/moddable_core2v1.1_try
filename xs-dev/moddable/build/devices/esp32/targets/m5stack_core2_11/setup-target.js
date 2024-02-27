@@ -193,6 +193,13 @@ export default function (done) {
     };
     accelerometer.start(300);
   }
+  
+  // レジスタの値を出力したい
+  let regvalue = 0;
+  for (var ireg = 0; ireg <= 0xff; ireg++){
+	regvalue = power.readByte(ireg);
+	trace(`register: ${ireg.toString(16)}\t value: ${regvalue.toString(16)}\n`);  
+  }
 
   done?.();
 }
@@ -209,10 +216,12 @@ class Power extends AXP2101 {
     this.writeByte(0x69, 0x13); // CHGLED setting
     this.writeByte(0x99, 0x00); // DLDO1 set 0.5v (vibration motor)
 
+	// DCDC1&3  Enable
+	this.writeByte(0x80, this.readByte(0x00) | 0x04);
+	
     // main power line
     this._dcdc1.voltage = 3350;
-    this._dcdc3.voltage = 3350;
-    this.chargeCurrent = AXP2101.CHARGE_CURRENT.Ch_100mA;
+    this.chargeEnable = true;
 
     // LCD
     this.lcd = this._bldo1;

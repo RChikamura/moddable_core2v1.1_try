@@ -171,7 +171,7 @@ class LDO {
 
 export default class AXP2101 extends SMBus {
   constructor(it) {
-    //super({ address: 0x34, ...it });
+    super({ address: 0x34, ...it });
     //this._dledo1 = new DLEDO({ register: 0x34, parent: this, offsetV: 5, offsetEn: 7}); //もとからあったLDO設定(改行をなくしただけ)
 
 	//データシートとaxp192.jsのコードを参考に追加
@@ -227,39 +227,43 @@ export default class AXP2101 extends SMBus {
     return Boolean(this.readByte(0x01) & 0b00000100);
   }
 
-  powerOff() {
-    this.writeByte(0x10, this.readByte(0x10) | 0b00000001);
+  powerOff() { // m5core2 AXP2101.cpp L158を参考に直してみる
+    //this.writeByte(0x10, this.readByte(0x10) | 0b00000001); //削除
+	this.writeByte(0x10, this.readByte(0x10) | 0b00000010); // POWERON Negative Edge IRQ(ponne_irq_en) enable
+	this.writeByte(0x25, 0b00011011); // sleep and wait for wakeup
+    Timer.delay(100);
+	this.writeByte(0x10, 0b00110001);  // power off
   }
 
-  setChargeEnable(enable) {
+  setChargeEnable(enable) { // 変更
     if (enable) {
-      this.writeByte(0x33, this.readByte(0x33) | 0b10000000);
+      this.writeByte(0x18, this.readByte(0x18) | 0x02);
     } else {
-      this.writeByte(0x33, this.readByte(0x33) | 0b10000000);
+      this.writeByte(0x18, this.readByte(0x18) & 0xFD);
     }
   }
 
-  setChargeCurrent(state) {
+  /*setChargeCurrent(state) { // m5core2 AXP.cpp L520を見る限り、AXP2101では使っていないらしい
     this.writeByte(0x33, (this.readByte(0x33) & 0xf0) | (state & 0x0f));
-  }
+  }*/
 
-  setADCEnable(channel, enable) {
+  /*setADCEnable(channel, enable) { // m5core2 AXP.cpp L215を見る限り、AXP2101では使っていないらしい
     const mask = 0x01 << channel;
     if (enable) {
       this.writeByte(0x82, this.readByte(0x82) | mask);
     } else {
       this.writeByte(0x82, this.readByte(0x82) & ~mask);
     }
-  }
+  }*/
 
-  setCoulometerEnable(channel, enable) {
+  /*setCoulometerEnable(channel, enable) { // これたぶんAXP192のピンの出力をOnOffするレジスタの設定。
     const mask = 0x01 << channel;
     if (enable) {
       this.writeByte(0x12, this.readByte(0x12) | mask);
     } else {
       this.writeByte(0x12, this.readByte(0x12) & ~mask);
     }
-  }
+  }*/
 
   _getCoulometerCharge() {
     return this.readBlock(0xb0, 4);
