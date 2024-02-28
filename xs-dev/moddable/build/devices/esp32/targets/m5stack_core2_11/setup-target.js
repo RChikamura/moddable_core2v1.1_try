@@ -226,6 +226,7 @@ class Power extends AXP2101 {
     // LCD
     this.lcd = this._bldo1;
     this.lcd.voltage = 2800;
+    this.lcd.enable = true;
 
     // internal LCD logic
     this._aldo4.voltage = 3300;
