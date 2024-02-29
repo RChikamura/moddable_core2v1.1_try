@@ -235,13 +235,13 @@ export default class AXP2101 extends SMBus {
 	this.writeByte(0x10, 0b00110001);  // power off
   }
 
-  setChargeEnable(enable) { // 変更
+  /*setChargeEnable(enable) { // 変更したが、これを使うと正常起動できなくなる
     if (enable) {
       this.writeByte(0x18, this.readByte(0x18) | 0x02);
     } else {
       this.writeByte(0x18, this.readByte(0x18) & 0xFD);
     }
-  }
+  }*/
 
   /*setChargeCurrent(state) { // m5core2 AXP.cpp L520を見る限り、AXP2101では使っていないらしい
     this.writeByte(0x33, (this.readByte(0x33) & 0xf0) | (state & 0x0f));

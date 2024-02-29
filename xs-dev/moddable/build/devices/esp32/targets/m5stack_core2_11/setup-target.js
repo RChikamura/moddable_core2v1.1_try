@@ -221,7 +221,7 @@ class Power extends AXP2101 {
 	
     // main power line
     this._dcdc1.voltage = 3350;
-    this.chargeEnable = true;
+    //this.chargeEnable = true; // これがあるとなぜか動かない
 
     // LCD
     this.lcd = this._bldo1;
@@ -243,8 +243,10 @@ class Power extends AXP2101 {
     // AXP192 GPIO4 -> AXP2101 ALDO2
     this._aldo2.voltage = 3300;
     this.resetLcd();
-    this.busPowerMode = 0; //  bus power mode_output
-    Timer.delay(200);
+	// bus power mode_output
+    this._bldo2.voltage = 3300;
+    this._bldo2.enable = true;
+	Timer.delay(200);
   }
 
   resetLcd() {
@@ -253,15 +255,6 @@ class Power extends AXP2101 {
     this._aldo2.enable = true;
   }
 
-  set busPowerMode(mode) {
-    if (mode == 0) {
-      this._bldo2.voltage = 3300;
-      this._bldo2.enable = true;
-    } else {
-      this._bldo2.enable = false;
-    }
-  }
-  
   // value 0 - 100 %
   set brightness(value) {
     if (value <= 0)
